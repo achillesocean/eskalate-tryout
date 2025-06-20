@@ -38,3 +38,8 @@ pagenumber: number
 pagesize: number
 totalsize: number
 errors: list of strings, nullable
+
+
+roles and jwt-- how are roles handled, are they handled with the jwt?
+
+what does it mean to 'serialize a response'?

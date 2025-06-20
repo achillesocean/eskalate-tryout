@@ -70,6 +70,9 @@ class BaseResponse(BaseModel):
     object: Optional[dict] = None
     errors: Optional[List[str]] = None
 
+    class Config:
+        from_attributes = True
+
 class PaginatedResponse(BaseModel):
     success: bool
     message: str

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from api.routers import auth, jobs, applications
-from db.database import engine, Base
+from db.database import engine
+from models.models import Base
 
 app = FastAPI()
 
