@@ -4,7 +4,6 @@ from schemas.schemas import JobCreate, JobResponse, BaseResponse, PaginatedRespo
 from models.models import Job, UserRole
 from api.dependencies import get_db, get_current_user, check_role
 from models.models import User
-from pydantic import model_dump
 
 router = APIRouter()
 
@@ -17,11 +16,15 @@ def create_job(job: JobCreate, current_user: User = Depends(get_current_user), d
             message="Unauthorized",
             errors=["Cannot create job for another user"]
         )
-    db_job = Job(**model_dump(job, exclude={'createdby'}), createdby=current_user.id)
+    db_job = Job(**job.model_dump(exclude={'createdby'}), createdby=current_user.id)
     db.add(db_job)
     db.commit()
     db.refresh(db_job)
-    return BaseResponse(success=True, message="Job created successfully", object=JobResponse.from_orm(db_job).dict())
+    return BaseResponse(
+        success=True,
+        message="Job created successfully",
+        object=JobResponse.model_validate(db_job.__dict__).model_dump()
+    )
 
 @router.get("", response_model=PaginatedResponse)
 def browse_jobs(
@@ -36,7 +39,7 @@ def browse_jobs(
     return PaginatedResponse(
         success=True,
         message="Jobs retrieved successfully",
-        object=[model_dump(JobResponse.from_attributes(job)) for job in jobs],
+        object=[JobResponse.model_validate(job.__dict__).model_dump() for job in jobs],
         pagenumber=page,
         pagesize=page_size,
         totalsize=total_size
