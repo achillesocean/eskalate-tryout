@@ -1,0 +1,40 @@
+tabels:
+user:
+id: uuid, primary key
+name: string
+email: string, unique
+password: string(hashed)
+role: enum ("applicant" or "company")
+
+job: 
+id: uuid, primary key
+title: string
+description: string
+location: string
+createdby: uuid(foreign key to user.id (must be a company role))
+createdby: timestamp
+
+application: 
+id: uuid, primary key
+applicantid: uuid (foreign key to user.id, applicant role only)
+jobid: uuid (foreign key to job.id)
+resumelink: string(url to cloudinary file)
+coverletter: string (optional)
+status: enum("applied", "reviewed", "interviewed", "rejected", "hired")
+appliedAt: timestamp
+
+response objects:
+base response:
+success: boolean
+message: string
+object: object
+errors: list of strings, nullable
+
+paginated response: 
+success: boolean
+message: string
+object: list of objects
+pagenumber: number
+pagesize: number
+totalsize: number
+errors: list of strings, nullable
